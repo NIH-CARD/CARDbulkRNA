@@ -15,7 +15,79 @@ metadata_table = work_dir+'/input/.csv' # Define where the metadata data exists 
 """                                  Workflow                               """
 """========================================================================="""
 
-rule X:
+rule fastqscreen:
+    input:
+        
+    output:
+        
+    singularity:
+        
+    params:
+        
+    resources:
+        runtime=120, mem_mb=64000, disk_mb=10000, slurm_partition='quick' 
+    script:
+        work_dir+'/scripts/
+
+
+rule umitools:
+    input:
+        
+    output:
+        
+    singularity:
+        
+    params:
+        
+    resources:
+        runtime=120, mem_mb=64000, disk_mb=10000, slurm_partition='quick' 
+    script:
+        work_dir+'/scripts/
+
+rule salmon:
+    input:
+        
+    output:
+        
+    singularity:
+        
+    params:
+        
+    resources:
+        runtime=120, mem_mb=64000, disk_mb=10000, slurm_partition='quick' 
+    script:
+        work_dir+'/scripts/
+
+
+rule star:
+    input:
+        
+    output:
+        
+    singularity:
+        
+    params:
+        
+    resources:
+        runtime=120, mem_mb=64000, disk_mb=10000, slurm_partition='quick' 
+    script:
+        work_dir+'/scripts/
+
+rule featurecounts:
+    input:
+        
+    output:
+        
+    singularity:
+        
+    params:
+        
+    resources:
+        runtime=120, mem_mb=64000, disk_mb=10000, slurm_partition='quick' 
+    script:
+        work_dir+'/scripts/
+
+rule multiqc:
     input:
         
     output:
