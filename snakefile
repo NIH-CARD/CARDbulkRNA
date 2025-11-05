@@ -12,6 +12,9 @@ work_dir = '' # Define the working directory, explictly as the directory of this
 metadata_table = work_dir+'/input/.csv' # Define where the metadata data exists for each sample to be processed
 metadata_df = pd.read_csv(metadata_table)
 
+"""Config file location"""
+configfile: "path/to/config.yaml"
+
 """========================================================================="""
 """                                  Workflow                               """
 """========================================================================="""
@@ -20,20 +23,6 @@ rule all:
     input:
         expand('fastqscreen_{sample}_done', sample=metadata_df['sample'])
 
-"""
-{% if config.pipe_params.screen %}
-- name: fastqscreen_{{ sample }}
-  after: cutadapt_{{ sample }}
-  input: [{{ config.workdir }}, {{ parent_dirs.multi }}]
-  output: fastqscreen_{{ sample }}_done
-  cmd: |
-
-    mkdir -p {{ config.workdir }}/fastq_screen/{{ sample }}
-    cd {{ config.workdir }}/fastq_screen/{{ sample }}
-
-    fastq_screen --conf {{ file_locations.fastq_screen_conf }} {{ config.workdir }}/trimmed/{{ sample }}/{{ sample }}_trimmed_R1_001.fastq.gz
-{% endif %}
-"""
 rule fastqscreen:
     input:
         '{file_locations.fastq_screen_conf}'
