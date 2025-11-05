@@ -1,5 +1,6 @@
 # Folders and files to not track
 snakemake_profile
+exampledata
 
 # Snakemake logs
 .snakemake
