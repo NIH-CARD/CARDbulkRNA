@@ -17,7 +17,6 @@ metadata_table = work_dir+'/input/.csv' # Define where the metadata data exists 
 
 rule fastqscreen:
     input:metadata_table
-        
 
     output:fastq.html
         
