@@ -1,0 +1,3 @@
+data_dir: 'path/to/data_directory'
+work_dir: 'path/to/work_directory'
+metadata_file: 'path/to/metadata_file'
