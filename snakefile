@@ -36,15 +36,15 @@ rule all:
 """
 rule fastqscreen:
     input:
-        metadata_table
+        '{file_locations.fastq_screen_conf}'
     output:
-        'fastqscreen_{sample}_done'
+        '{config.workdir}/trimmed/{sample}/{sample}_trimmed_R1_001.fastq.gz'
     params:
         sample='{sample}',
     resources:
         runtime=120, mem_mb=64000, disk_mb=10000, slurm_partition='quick' 
     shell:
-        'module load fastq_screen/0.15.3; fastq_screen --conf'
+        'module load fastq_screen/0.15.3; fastq_screen --conf {file_locations.fastq_screen_conf} {config.workdir}/trimmed/{sample}/{sample}_trimmed_R1_001.fastq.gz'
 
 """
 rule umitools:
