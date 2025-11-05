@@ -15,6 +15,27 @@ metadata_table = work_dir+'/input/.csv' # Define where the metadata data exists 
 """                                  Workflow                               """
 """========================================================================="""
 
+
+"""
+{% if config.pipe_params.screen %}
+- name: fastqscreen_{{ sample }}
+  after: cutadapt_{{ sample }}
+  input: [{{ config.workdir }}, {{ parent_dirs.multi }}]
+  output: fastqscreen_{{ sample }}_done
+  cpus: 1
+  mem: 56G
+  walltime: "0-2:00"
+  container: {{ singularity.fastq_screen }}
+  cmd: |
+    #!/bin/bash
+    #SBATCH --partition=quick
+
+    mkdir -p {{ config.workdir }}/fastq_screen/{{ sample }}
+    cd {{ config.workdir }}/fastq_screen/{{ sample }}
+
+    fastq_screen --conf {{ file_locations.fastq_screen_conf }} {{ config.workdir }}/trimmed/{{ sample }}/{{ sample }}_trimmed_R1_001.fastq.gz
+{% endif %}
+"""
 rule fastqscreen:
     input:metadata_table
 
