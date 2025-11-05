@@ -10,24 +10,23 @@ import os
 data_dir = '' # Define the data directory, explicitly
 work_dir = '' # Define the working directory, explictly as the directory of this pipeline
 metadata_table = work_dir+'/input/.csv' # Define where the metadata data exists for each sample to be processed
-#More files to come!
+
 """========================================================================="""
 """                                  Workflow                               """
 """========================================================================="""
 
 rule fastqscreen:
-    input:
+    input:metadata_table
         
-    output:
+
+    output:fastq.html
         
-    singularity:
+    singularity:envs['singlecell']
         
-    params:
+    params:sample='{sample}',
         
-    resources:
-        runtime=120, mem_mb=64000, disk_mb=10000, slurm_partition='quick' 
-    script:
-        work_dir+'/scripts/
+    resources:runtime=120, mem_mb=64000, disk_mb=10000, slurm_partition='quick' 
+    script:work_dir+'/scripts/
 
 
 rule umitools:
