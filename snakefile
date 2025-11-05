@@ -10,7 +10,7 @@ import os
 data_dir = '' # Define the data directory, explicitly
 work_dir = '' # Define the working directory, explictly as the directory of this pipeline
 metadata_table = work_dir+'/input/.csv' # Define where the metadata data exists for each sample to be processed
-
+#More files to come!
 """========================================================================="""
 """                                  Workflow                               """
 """========================================================================="""
