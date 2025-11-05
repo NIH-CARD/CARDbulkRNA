@@ -15,6 +15,9 @@ metadata_table = work_dir+'/input/.csv' # Define where the metadata data exists 
 """                                  Workflow                               """
 """========================================================================="""
 
+rule all:
+    input:
+        expand('fastqscreen_{sample}_done', sample=metadata_table['sample'])
 
 """
 {% if config.pipe_params.screen %}
@@ -22,7 +25,6 @@ metadata_table = work_dir+'/input/.csv' # Define where the metadata data exists 
   after: cutadapt_{{ sample }}
   input: [{{ config.workdir }}, {{ parent_dirs.multi }}]
   output: fastqscreen_{{ sample }}_done
-  container: {{ singularity.fastq_screen }}
   cmd: |
 
     mkdir -p {{ config.workdir }}/fastq_screen/{{ sample }}
@@ -35,13 +37,13 @@ rule fastqscreen:
     input:
         metadata_table
     output:
-        'fastq.html'
+        'fastqscreen_{sample}_done'
     params:
         sample='{sample}',
     resources:
         runtime=120, mem_mb=64000, disk_mb=10000, slurm_partition='quick' 
     shell:
-        'module load fastq_screen; fastq_screen --conf'
+        'module load fastq_screen/0.15.3; fastq_screen --conf'
 
 """
 rule umitools:
