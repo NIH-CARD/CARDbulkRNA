@@ -10,6 +10,7 @@ import os
 data_dir = '' # Define the data directory, explicitly
 work_dir = '' # Define the working directory, explictly as the directory of this pipeline
 metadata_table = work_dir+'/input/.csv' # Define where the metadata data exists for each sample to be processed
+metadata_df = pd.read_csv(metadata_table)
 
 """========================================================================="""
 """                                  Workflow                               """
@@ -17,7 +18,7 @@ metadata_table = work_dir+'/input/.csv' # Define where the metadata data exists 
 
 rule all:
     input:
-        expand('fastqscreen_{sample}_done', sample=metadata_table['sample'])
+        expand('fastqscreen_{sample}_done', sample=metadata_df['sample'])
 
 """
 {% if config.pipe_params.screen %}
