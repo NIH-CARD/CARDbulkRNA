@@ -9,8 +9,8 @@ import os
 configfile: "path/to/config.yaml"
 
 """File locations"""
-data_dir = config['data_dir'] # Define the data directory, explicitly
-work_dir = config['work_dir'] # Define the working directory, explictly as the directory of this pipeline
+data_dir = config['data_dir'] # Define the data directory, explicitly in the config file
+work_dir = config['work_dir'] # Define the working directory, explictly as the directory of this pipeline in the config file
 metadata_table = config['metadata_file']# Define where the metadata data exists for each sample to be processed
 metadata_df = pd.read_csv(metadata_table)
 
