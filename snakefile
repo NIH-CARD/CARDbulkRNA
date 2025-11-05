@@ -5,15 +5,15 @@ import os
 """                                 Parameters                              """
 """========================================================================="""
 
-
-"""File locations"""
-data_dir = '' # Define the data directory, explicitly
-work_dir = '' # Define the working directory, explictly as the directory of this pipeline
-metadata_table = work_dir+'/input/.csv' # Define where the metadata data exists for each sample to be processed
-metadata_df = pd.read_csv(metadata_table)
-
 """Config file location"""
 configfile: "path/to/config.yaml"
+
+"""File locations"""
+data_dir = config['data_dir'] # Define the data directory, explicitly
+work_dir = config['work_dir'] # Define the working directory, explictly as the directory of this pipeline
+metadata_table = config['metadata_file']# Define where the metadata data exists for each sample to be processed
+metadata_df = pd.read_csv(metadata_table)
+
 
 """========================================================================="""
 """                                  Workflow                               """
