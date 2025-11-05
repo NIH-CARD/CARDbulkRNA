@@ -22,13 +22,8 @@ metadata_table = work_dir+'/input/.csv' # Define where the metadata data exists 
   after: cutadapt_{{ sample }}
   input: [{{ config.workdir }}, {{ parent_dirs.multi }}]
   output: fastqscreen_{{ sample }}_done
-  cpus: 1
-  mem: 56G
-  walltime: "0-2:00"
   container: {{ singularity.fastq_screen }}
   cmd: |
-    #!/bin/bash
-    #SBATCH --partition=quick
 
     mkdir -p {{ config.workdir }}/fastq_screen/{{ sample }}
     cd {{ config.workdir }}/fastq_screen/{{ sample }}
@@ -37,18 +32,18 @@ metadata_table = work_dir+'/input/.csv' # Define where the metadata data exists 
 {% endif %}
 """
 rule fastqscreen:
-    input:metadata_table
+    input:
+        metadata_table
+    output:
+        'fastq.html'
+    params:
+        sample='{sample}',
+    resources:
+        runtime=120, mem_mb=64000, disk_mb=10000, slurm_partition='quick' 
+    shell:
+        'module load fastq_screen; fastq_screen --conf'
 
-    output:fastq.html
-        
-    singularity:envs['singlecell']
-        
-    params:sample='{sample}',
-        
-    resources:runtime=120, mem_mb=64000, disk_mb=10000, slurm_partition='quick' 
-    script:work_dir+'/scripts/
-
-
+"""
 rule umitools:
     input:
         
@@ -61,7 +56,7 @@ rule umitools:
     resources:
         runtime=120, mem_mb=64000, disk_mb=10000, slurm_partition='quick' 
     script:
-        work_dir+'/scripts/
+        work_dir+'/scripts/'
 
 rule salmon:
     input:
@@ -75,7 +70,7 @@ rule salmon:
     resources:
         runtime=120, mem_mb=64000, disk_mb=10000, slurm_partition='quick' 
     script:
-        work_dir+'/scripts/
+        work_dir+'/scripts/'
 
 
 rule star:
@@ -90,7 +85,7 @@ rule star:
     resources:
         runtime=120, mem_mb=64000, disk_mb=10000, slurm_partition='quick' 
     script:
-        work_dir+'/scripts/
+        work_dir+'/scripts/'
 
 rule featurecounts:
     input:
@@ -104,7 +99,7 @@ rule featurecounts:
     resources:
         runtime=120, mem_mb=64000, disk_mb=10000, slurm_partition='quick' 
     script:
-        work_dir+'/scripts/
+        work_dir+'/scripts/'
 
 rule multiqc:
     input:
@@ -118,4 +113,5 @@ rule multiqc:
     resources:
         runtime=120, mem_mb=64000, disk_mb=10000, slurm_partition='quick' 
     script:
-        work_dir+'/scripts/
+        work_dir+'/scripts/'
+"""
