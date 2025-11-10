@@ -42,8 +42,7 @@ rule fastqc:
         mkdir -p {work_dir}/fastqc/ 
         fastqc -o {work_dir}/fastqc/{input.fastq} 
         """
-
-
+        
 rule multiqc:
     input:
         expand(f"{work_dir}/fastqc/{{sample}}_fastqc.zip", 
