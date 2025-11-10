@@ -7,10 +7,11 @@ import os
 
 
 """File locations"""
-data_dir = config['data_dir'] # Define the data directory, explicitly in the config file
-work_dir = config['work_dir'] # Define the working directory, explictly as the directory of this pipeline in the config file
-genome_dir = config['genome_dir'] # Define where the genome index files are located for alignment
-metadata_table = config['metadata_file']# Define where the metadata data exists for each sample to be processed
+data_dir = config['data_dir'] 
+work_dir = config['work_dir'] 
+genome_dir = config['genome_dir'] 
+
+metadata_table = config['metadata_file']
 metadata_df = pd.read_csv(metadata_table)
 
 """========================================================================="""
