@@ -19,15 +19,24 @@ GENOME_DIR = config['genome_dir']
 LAYOUT = config['layout'].upper()
 
 # --- Grab FASTQ paths ---
+import glob
+
 def get_fastqs(wc):
     sample = wc.sample
     if LAYOUT == "PE":
-        return [
-            os.path.join(DATA_DIR, f"{sample}_R1.fastq.gz"),
-            os.path.join(DATA_DIR, f"{sample}_R2.fastq.gz")
-        ]
+        # find any file that matches both R1 and R2 for the sample
+        r1_files = sorted(glob.glob(os.path.join(DATA_DIR, f"{sample}*R1*.fastq*")))
+        r2_files = sorted(glob.glob(os.path.join(DATA_DIR, f"{sample}*R2*.fastq*")))
+        if not r1_files or not r2_files:
+            raise FileNotFoundError(f"No FASTQs found for {sample} in {DATA_DIR}")
+        return [r1_files[0], r2_files[0]]
+
     elif LAYOUT == "SE":
-        return [os.path.join(DATA_DIR, f"{sample}.fastq.gz")]
+        files = sorted(glob.glob(os.path.join(DATA_DIR, f"{sample}*R1*.fastq*")))
+        if not files:
+            raise FileNotFoundError(f"No FASTQ found for {sample} in {DATA_DIR}")
+        return [files[0]]
+
     else:
         raise ValueError(f"Unknown layout '{LAYOUT}' (expected PE or SE)")
 
