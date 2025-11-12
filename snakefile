@@ -37,11 +37,11 @@ def get_fastqs(wildcards):
 
 rule all: 
     input:
-        expand(f"{work_dir}/fastqc/{{sample}}_fastqc.html", 
+        expand(f"{WORK_DIR}/fastqc/{{sample}}_fastqc.html", 
                sample=metadata_df.sample),
-        expand(f"{work_dir}/fastqc/{{sample}}_fastqc.zip", 
+        expand(f"{WORK_DIR}/fastqc/{{sample}}_fastqc.zip", 
                sample=metadata_df.sample),
-               f"{work_dir}/multiqc/multiqc_report.html"
+               f"{WORK_DIR}/multiqc/multiqc_report.html"
 
 rule fastqc:
     input:
