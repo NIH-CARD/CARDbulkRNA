@@ -16,7 +16,7 @@ DATA_DIR = config['data_dir']
 WORK_DIR = config['work_dir'] 
 GENOME_DIR = config['genome_dir'] 
 
-layout = config['layout'].upper()
+LAYOUT = config['layout'].upper()
 
 # --- Grab FASTQ paths ---
 def get_fastqs(wildcards):
