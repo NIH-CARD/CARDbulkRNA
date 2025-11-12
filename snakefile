@@ -54,8 +54,6 @@ rule fastqc:
         zip = expand(f"{WORK_DIR}/fastqc/{{sample}}_{{read}}_fastqc.zip",
                      sample=lambda wc: wc.sample,
                      read=["R1", "R2"] if LAYOUT == "PE" else ["R1"]),
-    shell:
-        "fastqc -t {threads} -o results/fastqc {input}"
     resources:
         runtime=120, mem_mb=64000, disk_mb=10000, slurm_partition='quick' 
     shell:
