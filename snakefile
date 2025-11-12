@@ -37,11 +37,10 @@ def get_fastqs(wildcards):
 
 rule all: 
     input:
-        expand(f"{WORK_DIR}/fastqc/{{sample}}_fastqc.html", 
-               sample=metadata_df.sample),
-        expand(f"{WORK_DIR}/fastqc/{{sample}}_fastqc.zip", 
-               sample=metadata_df.sample),
-               f"{WORK_DIR}/multiqc/multiqc_report.html"
+        expand(f"{WORK_DIR}/fastqc/{{sample}}_R1_fastqc.html", sample=SAMPLES),
+        expand(f"{WORK_DIR}/fastqc/{{sample}}_R2_fastqc.html", sample=SAMPLES) if LAYOUT == "PE" else [],
+        f"{WORK_DIR}/multiqc/multiqc_report.html"
+
 
 rule fastqc:
     input:
