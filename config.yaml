@@ -1,5 +1,5 @@
 #Define directories 
-data_dir="" # Define the data directory, explicitly 
-work_dir="" # Define the working directory, explictly as the directory of this pipeline in the config file
-genome_dir="" # Define where the genome index files are located for alignment
+data_dir= /path/to/fastqs # Define the data directory, explicitly 
+work_dir= /path/to/work_dir # Define the working directory, explictly as the directory of this pipeline in the config file
+genome_dir= /path/to/genome_dir # Define where the genome index files are located for alignment
 metadata_file = "" # Define where the metadata data exists for each sample to be processed
