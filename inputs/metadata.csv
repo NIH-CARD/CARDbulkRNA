@@ -1,3 +1,5 @@
-sampleID,batch,replicate
-sample1,batch1
-sample2,batch2
+sampleID,condition,replicate
+control1,control,1
+control2,control,2
+mutant1,mutant,1
+mutant2,mutant,2
