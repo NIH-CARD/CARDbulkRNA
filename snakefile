@@ -19,8 +19,8 @@ GENOME_DIR = config['genome_dir']
 LAYOUT = config['layout'].upper()
 
 # --- Grab FASTQ paths ---
-def get_fastqs(wildcards):
-    sample = wildcards.sample
+def get_fastqs(wc):
+    sample = wc.sample
     if LAYOUT == "PE":
         return [
             os.path.join(DATA_DIR, f"{sample}_R1.fastq.gz"),
@@ -46,12 +46,11 @@ rule fastqc:
     input:
         get_fastqs
     output:
-        html = expand(f"{WORK_DIR}/fastqc/{{sample}}_{{read}}_fastqc.html",
-                      sample=lambda wc: wc.sample,
-                      read=["R1", "R2"] if LAYOUT == "PE" else ["R1"]),
-        zip = expand(f"{WORK_DIR}/fastqc/{{sample}}_{{read}}_fastqc.zip",
-                     sample=lambda wc: wc.sample,
-                     read=["R1", "R2"] if LAYOUT == "PE" else ["R1"]),
+        html = temp(
+        f"{WORK_DIR}/fastqc/{{sample}}_R1_fastqc.html"
+        if LAYOUT == "SE"
+        else f"{WORK_DIR}/fastqc/{{sample}}_R{{read}}_fastqc.html"
+        )
     threads: 2
     resources:
         runtime=120,
@@ -66,19 +65,22 @@ rule fastqc:
         """
 
 rule multiqc:
-   input:
+    input:
         expand(f"{WORK_DIR}/fastqc/{{sample}}_R1_fastqc.html", sample=SAMPLES),
         expand(f"{WORK_DIR}/fastqc/{{sample}}_R2_fastqc.html", sample=SAMPLES) if LAYOUT == "PE" else []
-   output:
+    output:
         f"{WORK_DIR}/multiqc/multiqc_report.html"
-   resources:
-        runtime=60, mem_mb=32000, disk_mb=10000, slurm_partition='quick' 
-   shell:
+    resources:
+        runtime=60,
+        mem_mb=32000,
+        disk_mb=10000,
+        slurm_partition="quick"
+    shell:
         """
         module load multiqc/1.9
-        mkdir -p {work_dir}/multiqc/
-        multiqc {work_dir}/fastqc/ -o {work_dir}/multiqc
-        """ 
+        mkdir -p {WORK_DIR}/multiqc
+        multiqc {WORK_DIR}/fastqc -o {WORK_DIR}/multiqc
+        """
 
 #rule star_alignment:
 #    input:
