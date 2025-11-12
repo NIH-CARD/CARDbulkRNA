@@ -46,7 +46,6 @@ rule all:
 rule fastqc:
     input:
         get_fastqs
-        
     output:
         html = expand(f"{WORK_DIR}/fastqc/{{sample}}_{{read}}_fastqc.html",
                       sample=lambda wc: wc.sample,
@@ -54,15 +53,19 @@ rule fastqc:
         zip = expand(f"{WORK_DIR}/fastqc/{{sample}}_{{read}}_fastqc.zip",
                      sample=lambda wc: wc.sample,
                      read=["R1", "R2"] if LAYOUT == "PE" else ["R1"]),
+    threads: 2
     resources:
-        runtime=120, mem_mb=64000, disk_mb=10000, slurm_partition='quick' 
+        runtime=120,
+        mem_mb=64000,
+        disk_mb=10000,
+        slurm_partition='quick'
     shell:
         """
-        module load fastqc/0.12.1 
-        mkdir -p {work_dir}/fastqc/ 
-        fastqc -o {work_dir}/fastqc/{input} 
+        module load fastqc/0.12.1
+        mkdir -p {WORK_DIR}/fastqc
+        fastqc -t {threads} -o {WORK_DIR}/fastqc {input}
         """
-
+        
 rule multiqc:
    input:
         expand(f"{WORK_DIR}/fastqc/{{sample}}_R1_fastqc.html", sample=SAMPLES),
