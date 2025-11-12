@@ -4,7 +4,7 @@
 data_dir: /raw # Define the data directory, explicitly 
 work_dir: ./results # Define the working directory, explictly as the directory of this pipeline in the config file
 genome_dir: /path/to/genome_dir # Define where the genome index files are located for alignment
-metadata_file: /inputs/metadata_file.csv 
+metadata_file: inputs/metadata_file.csv 
 
 # Define the library
 strandedness: forward # Define the library strandedness for alignment; options are 'forward', 'reverse', or 'unstranded'
