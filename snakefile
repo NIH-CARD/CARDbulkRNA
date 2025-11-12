@@ -65,16 +65,16 @@ rule fastqc:
         mkdir -p {WORK_DIR}/fastqc
         fastqc -t {threads} -o {WORK_DIR}/fastqc {input}
         """
-        
+
 rule multiqc:
    input:
         expand(f"{WORK_DIR}/fastqc/{{sample}}_R1_fastqc.html", sample=SAMPLES),
         expand(f"{WORK_DIR}/fastqc/{{sample}}_R2_fastqc.html", sample=SAMPLES) if LAYOUT == "PE" else []
-    output:
+   output:
         f"{WORK_DIR}/multiqc/multiqc_report.html"
-    resources:
+   resources:
         runtime=60, mem_mb=32000, disk_mb=10000, slurm_partition='quick' 
-    shell:
+   shell:
         """
         module load multiqc/1.9
         mkdir -p {work_dir}/multiqc/
