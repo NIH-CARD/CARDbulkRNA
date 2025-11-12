@@ -1,6 +1,11 @@
-#Define directories 
+# Configuration file for bulk RNA-seq analysis pipeline
+
+# Define file locations
 data_dir= /path/to/fastqs # Define the data directory, explicitly 
 work_dir= /path/to/work_dir # Define the working directory, explictly as the directory of this pipeline in the config file
 genome_dir= /path/to/genome_dir # Define where the genome index files are located for alignment
-
 metadata_file = /inputs/metadata_file.csv 
+
+# Define the library
+strandedness = reverse # Define the library strandedness for alignment; options are 'forward', 'reverse', or 'unstranded'
+layout = PE # Define whether the data is single-end (SE) or paired-end (PE); options are 'SE' or 'PE'
