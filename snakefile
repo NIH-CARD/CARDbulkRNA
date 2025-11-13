@@ -46,20 +46,14 @@ def get_fastqs(wc):
 
 rule all: 
     input:
-        expand(f"{WORK_DIR}/fastqc/{{sample}}_R1_fastqc.html", sample=SAMPLES),
-        expand(f"{WORK_DIR}/fastqc/{{sample}}_R2_fastqc.html", sample=SAMPLES) if LAYOUT == "PE" else [],
+        expand(f"{WORK_DIR}/fastqc/{{sample}}", sample=SAMPLES),
         f"{WORK_DIR}/multiqc/multiqc_report.html"
-
 
 rule fastqc:
     input:
         get_fastqs
     output:
-        html = temp(
-        f"{WORK_DIR}/fastqc/{{sample}}_R1_fastqc.html"
-        if LAYOUT == "SE"
-        else f"{WORK_DIR}/fastqc/{{sample}}_R{{read}}_fastqc.html"
-        )
+        directory(f"{WORK_DIR}/fastqc/{{sample}}")
     threads: 2
     resources:
         runtime=120,
@@ -75,8 +69,7 @@ rule fastqc:
 
 rule multiqc:
     input:
-        expand(f"{WORK_DIR}/fastqc/{{sample}}_R1_fastqc.html", sample=SAMPLES),
-        expand(f"{WORK_DIR}/fastqc/{{sample}}_R2_fastqc.html", sample=SAMPLES) if LAYOUT == "PE" else []
+        expand(f"{WORK_DIR}/fastqc/{{sample}}", sample=SAMPLES)
     output:
         f"{WORK_DIR}/multiqc/multiqc_report.html"
     resources:
