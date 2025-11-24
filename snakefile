@@ -44,38 +44,41 @@ def get_fastqs(wc):
 """                                  Workflow                               """
 """========================================================================="""
 
-rule all: 
+rule all:
     input:
-        expand(f"{WORK_DIR}/fastqc/{{sample}}", sample=SAMPLES),
+        expand(f"{WORK_DIR}/fastqc/{{sample}}_fastqc.html", sample=SAMPLES),
         f"{WORK_DIR}/multiqc/multiqc_report.html"
 
 rule fastqc:
     input:
         get_fastqs
     output:
-        directory(f"{WORK_DIR}/fastqc/{{sample}}")
+        html = temp(f"{WORK_DIR}/fastqc/{{sample}}_fastqc.html"),
+        zip  = temp(f"{WORK_DIR}/fastqc/{{sample}}_fastqc.zip")
     threads: 2
     resources:
         runtime=120,
         mem_mb=64000,
-        disk_mb=10000,
         slurm_partition='quick'
     shell:
         """
         module load fastqc/0.12.1
         mkdir -p {WORK_DIR}/fastqc
         fastqc -t {threads} -o {WORK_DIR}/fastqc {input}
+
+        # Rename unpredictable FastQC output
+        mv {WORK_DIR}/fastqc/*R1*fastqc.html {output.html} || mv {WORK_DIR}/fastqc/*fastqc.html {output.html}
+        mv {WORK_DIR}/fastqc/*R1*fastqc.zip  {output.zip}  || mv {WORK_DIR}/fastqc/*fastqc.zip  {output.zip}
         """
 
 rule multiqc:
     input:
-        expand(f"{WORK_DIR}/fastqc/{{sample}}", sample=SAMPLES)
+        expand(f"{WORK_DIR}/fastqc/{{sample}}_fastqc.html", sample=SAMPLES)
     output:
         f"{WORK_DIR}/multiqc/multiqc_report.html"
     resources:
         runtime=60,
         mem_mb=32000,
-        disk_mb=10000,
         slurm_partition="quick"
     shell:
         """
@@ -83,6 +86,7 @@ rule multiqc:
         mkdir -p {WORK_DIR}/multiqc
         multiqc {WORK_DIR}/fastqc -o {WORK_DIR}/multiqc
         """
+
 
 #rule star_alignment:
 #    input:
