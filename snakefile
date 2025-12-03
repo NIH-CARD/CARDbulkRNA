@@ -53,8 +53,8 @@ rule fastqc:
     input:
         get_fastqs
     output:
-        html = temp(f"{WORK_DIR}/fastqc/{{sample}}_fastqc.html"),
-        zip  = temp(f"{WORK_DIR}/fastqc/{{sample}}_fastqc.zip")
+        html = f"{WORK_DIR}/fastqc/{{sample}}_fastqc.html",
+        zip  = f"{WORK_DIR}/fastqc/{{sample}}_fastqc.zip"
     threads: 2
     resources:
         runtime=120,
@@ -65,10 +65,6 @@ rule fastqc:
         module load fastqc/0.12.1
         mkdir -p {WORK_DIR}/fastqc
         fastqc -t {threads} -o {WORK_DIR}/fastqc {input}
-
-        # Rename unpredictable FastQC output
-        mv {WORK_DIR}/fastqc/*R1*fastqc.html {output.html} || mv {WORK_DIR}/fastqc/*fastqc.html {output.html}
-        mv {WORK_DIR}/fastqc/*R1*fastqc.zip  {output.zip}  || mv {WORK_DIR}/fastqc/*fastqc.zip  {output.zip}
         """
 
 rule multiqc:
@@ -78,7 +74,7 @@ rule multiqc:
         f"{WORK_DIR}/multiqc/multiqc_report.html"
     resources:
         runtime=60,
-        mem_mb=32000,
+         mem_mb=32000,
         slurm_partition="quick"
     shell:
         """
