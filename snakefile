@@ -59,7 +59,8 @@ rule fastqc:
     resources:
         runtime=120,
         mem_mb=64000,
-        slurm_partition='quick'
+        slurm_partition='quick',
+        lscratch=500
     shell:
         """
         module load fastqc/0.12.1
