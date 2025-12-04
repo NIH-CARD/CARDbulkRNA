@@ -37,7 +37,8 @@ def get_fastqs(wc):
 
 rule all:
     input:
-        expand(f"{WORK_DIR}/fastqc/{{sample}}_fastqc.html", sample=SAMPLES),
+        expand(f"{WORK_DIR}/fastqc/{{sample}}_R1_fastqc.html", sample=SAMPLES),
+        expand(f"{WORK_DIR}/fastqc/{{sample}}_R2_fastqc.html", sample=SAMPLES),
         f"{WORK_DIR}/multiqc/multiqc_report.html"
 
 rule fastqc:
