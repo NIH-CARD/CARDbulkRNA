@@ -9,3 +9,7 @@ metadata_file: ./inputs/metadata_file.csv
 # Define the library
 strandedness: forward # Define the library strandedness for alignment; options are 'forward', 'reverse', or 'unstranded'
 layout: PE # Define whether the data is single-end (SE) or paired-end (PE); options are 'SE' or 'PE'
+
+# Trimming
+trimmer: "cutadapt"          # or "cutadapt"
+adapters: "auto"          # or file path
