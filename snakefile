@@ -7,16 +7,17 @@ import os
 
 
 """File locations"""
-configfile: "config.yaml"
-metadata_table = config['metadata_file']
-metadata_df = pd.read_csv(metadata_table)
-SAMPLES = metadata_df['sampleID'].tolist()
-
 DATA_DIR = config['data_dir'] 
 WORK_DIR = config['work_dir'] 
 GENOME_DIR = config['genome_dir'] 
 
 LAYOUT = config['layout'].upper()
+
+configfile: "config.yaml"
+metadata_table = config['metadata_file']
+metadata_df = pd.read_csv(metadata_table)
+SAMPLES = metadata_df['sampleID'].tolist()
+
 
 # --- Grab FASTQ paths ---
 import glob
