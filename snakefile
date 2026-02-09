@@ -16,20 +16,16 @@ genome_dir = config['genome_dir'] #define the genome directory, explicitly
 """Metadata parameters"""
 samples=config['metadata_table']
 
-
 # --- Grab FASTQ paths ---
-import glob
+def reads_for_sample(sample, col):
+    rows = df[df["sample"] == sample]
+    vals = [v for v in rows[col].tolist() if v and v.lower() != "nan"]
+    if len(vals) == 0:
+        raise ValueError(f"No {col} reads found for sample {sample}")
+    return vals
 
-#def get_fastqs(wc):
-#    sample = wc.sample
-#
-#    r1 = sorted(glob.glob(os.path.join(DATA_DIR, f"{sample}*R1*.fastq*")))
-#    r2 = sorted(glob.glob(os.path.join(DATA_DIR, f"{sample}*R2*.fastq*")))
-#
-#    if not r1 or not r2:
- #       raise FileNotFoundError(f"Missing R1 or R2 FASTQ for {sample} in {DATA_DIR}")
-#
-#    return [r1[0], r2[0]]
+def r1_list(wc): return reads_for_sample(wc.sample, "read1")
+def r2_list(wc): return reads_for_sample(wc.sample, "read2")
 """========================================================================="""
 """                                  Workflow                               """
 """========================================================================="""
@@ -38,9 +34,46 @@ import glob
 
 rule all:
     input:
-        expand(f"{work_dir}/fastqc/{{sample}}_R1_fastqc.html", sample=samples),
-        expand(f"{work_dir}/fastqc/{{sample}}_R2_fastqc.html", sample=samples),
-        f"{work_dir}/multiqc/multiqc_report.html"
+        # concatenated fastqs
+        expand("results/combined/{sample}_R1.fastq.gz", sample=samples),
+        expand("results/combined/{sample}_R2.fastq.gz", sample=samples),
+
+        # fastqc outputs
+        expand("results/fastqc/{sample}_R1_fastqc.html", sample=samples),
+        expand("results/fastqc/{sample}_R2_fastqc.html", sample=samples),
+        "results/multiqc/multiqc_report.html",
+
+        # STAR
+        expand("results/star/{sample}.Aligned.sortedByCoord.out.bam", sample=samples),
+        expand("results/star/{sample}.Aligned.sortedByCoord.out.bam.bai", sample=samples),
+
+        # featureCounts
+        "results/featurecounts/gene_counts.txt",
+        "results/featurecounts/gene_counts.txt.summary",
+
+        # Salmon
+        expand("results/salmon/{sample}/quant.sf", sample=samples),
+
+        # optional UMI outputs
+        expand("results/umi/{sample}/dedup.bam", sample=samples) if config["umi"]["enabled"] else []
+
+rule concatenate1:
+    input: r1_list
+    output: "results/combined/{sample}_combined_R1.fastq.gz"
+    shell:
+        r"""
+        mkdir -p results/combined
+        cat {input} > {output}
+        """
+
+rule concatenate2:
+    input: r2_list
+    output: "results/combined/{sample}_combined_R2.fastq.gz"
+    shell:
+        r"""
+        mkdir -p results/combined
+        cat {input} > {output}
+        """
 
 rule fastqc:
     input:

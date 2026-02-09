@@ -8,4 +8,4 @@ work_dir: /results # Define the working directory, explictly as the directory of
 #Define genomic directories 
 genome_dir: /path/to/genome_dir # Define where the genome index files are located for alignment
 STAR_index: /path/to/STAR_index # Define where the STAR index files are located
-gtf: "/path/to/annotation.gtf"
+gtf: /path/to/annotation.gtf
