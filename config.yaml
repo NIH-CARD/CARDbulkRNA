@@ -9,3 +9,8 @@ work_dir: /results # Define the working directory, explictly as the directory of
 genome_dir: /path/to/genome_dir # Define where the genome index files are located for alignment
 STAR_index: /path/to/STAR_index # Define where the STAR index files are located
 gtf: /path/to/annotation.gtf
+
+#cutadapt parameters
+cutadapt:
+  adapter_fwd: AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC
+  adapter_rev: AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT

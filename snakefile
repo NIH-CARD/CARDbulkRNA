@@ -79,8 +79,8 @@ rule fastqc:
     input:
         samples
     output:
-        r1 = f"{WORK_DIR}/fastqc/{{sample}}_R1_fastqc.html",
-        r2 = f"{WORK_DIR}/fastqc/{{sample}}_R2_fastqc.html"
+        r1 = f"{work_dir}/results/fastqc/{{sample}}_combined_R1_fastqc.html",
+        r2 = f"{work_dir}/results/fastqc/{{sample}}_combined_R2_fastqc.html"
     threads: 4
     resources:
         mem_mb=64000,
@@ -89,51 +89,67 @@ rule fastqc:
     shell:
         """
         module load fastqc
-        mkdir -p $LSCRATCH {WORK_DIR}/fastqc
+        mkdir -p {work_dir}/fastqc
 
         R1={input[0]}
         R2={input[1]}
 
         # Fastest: extract (no ZIP), run each read separately
-        fastqc --extract -t {threads} --dir $LSCRATCH -o $LSCRATCH $R1
-        fastqc --extract -t {threads} --dir $LSCRATCH -o $LSCRATCH $R2
+        fastqc results/combined/*.fastq.gz -o /results/fastqc 
         """
 
 rule multiqc:
     input:
-        expand(f"{work_dir}/fastqc/{{sample}}_R1_fastqc.html", sample=samples),
-        expand(f"{work_dir}/fastqc/{{sample}}_R2_fastqc.html", sample=samples)
+        expand(f"{work_dir}/fastqc/*_fastqc.html", sample=samples),
     output:
-        f"{WORK_DIR}/multiqc/multiqc_report.html"
+        f"{work_dir}/results/multiqc/multiqc_report.html"
     resources:
         mem_mb=32000,
         slurm_partition="quick"
     shell:
         """
         module load multiqc
-        mkdir -p {WORK_DIR}/multiqc
-        multiqc {WORK_DIR}/fastqc -o {WORK_DIR}/multiqc
+        mkdir -p {work_dir}/results/multiqc
+        multiqc {work_dir}/results/fastqc -o {work_dir}/results/multiqc
         """
 
+rule cutadapt:
+    input:
+        r1 = f"{data_dir}/{sample}_R1.fastq.gz",
+        r2 = f"{data_dir}/{sample}_R2.fastq.gz"
+    output:
+        r1 = f"{work_dir}/cutadapt/{sample}_R1_trimmed.fastq.gz",
+        r2 = f"{work_dir}/cutadapt/{sample}_R2_trimmed.fastq.gz"
+    params:
+        adapter_fwd = config["cutadapt"]["adapter_fwd"],
+        adapter_rev = config["cutadapt"]["adapter_rev"]
+    resources:
+        mem_mb=64000,
+        slurm_partition="quick"
+    shell:
+        """
+        module load cutadapt
+        mkdir -p {work_dir}/cutadapt
+        cutadapt -j 10 -U 3 -o /{work_dir}/trimmed/{sample}_R1.fastq.gz \ -p /{work_dir}/trimmed/{sample}_R2.fastq.gz
+        """
 
-#rule star_alignment:
-#    input:
-#        fastq = lambda wc: f"{data_dir}/{wc.sample}.fastq.gz"
-#        
-#    output:
-#        bam=f'{work_dir}/star/{sample}.Aligned.sortedByCoord.out.bam'
-#        
-#    params:'{sample}',
-#        
-#    resources:
-#        runtime=240, mem_mb=128000, disk_mb=50000, slurm_partition='long' 
-#    shell:
-#        """
-#        module load star/2.7.3a
-#        mkdir -p {work_dir}/star/ 
-#        STAR --runThreadN 8 --genomeDir /path/to/genome/index/ \
-#             --readFilesIn {input.fastq} --readFilesCommand zcat \
-#             --outFileNamePrefix {work_dir}/star/{params.sample}. \
-#             --outSAMtype BAM SortedByCoordinate
-#       """
+rule star_alignment:
+    input:
+        fastq = lambda wc: f"{data_dir}/{wc.sample}.fastq.gz"
+        
+    output:
+        bam=f'{work_dir}/star/{sample}.Aligned.sortedByCoord.out.bam'
+        
+    params:'{sample}',        
+    resources:
+        runtime=240, mem_mb=128000, disk_mb=50000, slurm_partition='long' 
+    shell:
+        """
+        module load star/2.7.3a
+        mkdir -p {work_dir}/star/ 
+        STAR --runThreadN 8 --genomeDir /path/to/genome/index/ \
+             --readFilesIn {input.fastq} --readFilesCommand zcat \
+             --outFileNamePrefix {work_dir}/star/{params.sample}. \
+             --outSAMtype BAM SortedByCoordinate
+       """
 
