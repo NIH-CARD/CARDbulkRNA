@@ -18,16 +18,16 @@ samples=pd.read_csv(metadata_table)
 # --- Grab FASTQ paths ---
 import glob
 
-def get_fastqs(wc):
-    sample = wc.sample
-
-    r1 = sorted(glob.glob(os.path.join(DATA_DIR, f"{sample}*R1*.fastq*")))
-    r2 = sorted(glob.glob(os.path.join(DATA_DIR, f"{sample}*R2*.fastq*")))
-
-    if not r1 or not r2:
-        raise FileNotFoundError(f"Missing R1 or R2 FASTQ for {sample} in {DATA_DIR}")
-
-    return [r1[0], r2[0]]
+#def get_fastqs(wc):
+#    sample = wc.sample
+#
+#    r1 = sorted(glob.glob(os.path.join(DATA_DIR, f"{sample}*R1*.fastq*")))
+#    r2 = sorted(glob.glob(os.path.join(DATA_DIR, f"{sample}*R2*.fastq*")))
+#
+#    if not r1 or not r2:
+ #       raise FileNotFoundError(f"Missing R1 or R2 FASTQ for {sample} in {DATA_DIR}")
+#
+#    return [r1[0], r2[0]]
 """========================================================================="""
 """                                  Workflow                               """
 """========================================================================="""
@@ -42,7 +42,7 @@ rule all:
 
 rule fastqc:
     input:
-        get_fastqs
+        samples
     output:
         r1 = f"{WORK_DIR}/fastqc/{{sample}}_R1_fastqc.html",
         r2 = f"{WORK_DIR}/fastqc/{{sample}}_R2_fastqc.html"

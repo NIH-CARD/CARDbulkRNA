@@ -1,5 +1,4 @@
-sampleID,condition,replicate
-control1,control,1
-control2,control,2
-mutant1,mutant,1
-mutant2,mutant,2
+sampleID,read1,read2
+control1,/fastqc/S11_L001_R1.fastq.gz,/fastq/S1_L001_R2.fastq.gz
+control1,/fastqc/S11_L002_R1.fastq.gz,/fastq/S1_L002_R2.fastq.gz
+
