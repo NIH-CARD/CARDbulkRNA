@@ -1,4 +1,4 @@
 sampleID,read1,read2
-control1,/fastqc/S11_L001_R1.fastq.gz,/fastq/S1_L001_R2.fastq.gz
+control1,/fastqc/S11_L001_R1.fastq.gz,/fastq/S1_L001_R2.fastq.gz 
 control1,/fastqc/S11_L002_R1.fastq.gz,/fastq/S1_L002_R2.fastq.gz
 

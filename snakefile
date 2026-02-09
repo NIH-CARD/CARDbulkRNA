@@ -7,12 +7,14 @@ import os
 
 
 """File locations"""
-data_dir = "/data/CARD_ARDIS/" #define the data directory, explicitly
-work_dir = os.getcwd() #define the work directory, explicitly as the direcotry of this pipleine
-genome_dir = "/data/CARD_ARDIS/" #define the genome directory, explicitly
+configfile: "config/config.yaml"
+
+data_dir = config['data_dir'] #define the data directory, explicitly
+work_dir = config['work_dir'] #define the work directory, explicitly as the direcotry of this pipleine
+genome_dir = config['genome_dir'] #define the genome directory, explicitly
 
 """Metadata parameters"""
-samples=pd.read_csv(metadata_table)
+samples=config['metadata_table']
 
 
 # --- Grab FASTQ paths ---
