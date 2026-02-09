@@ -7,16 +7,12 @@ import os
 
 
 """File locations"""
-DATA_DIR = config['data_dir'] 
-WORK_DIR = config['work_dir'] 
-GENOME_DIR = config['genome_dir'] 
+data_dir = "/data/CARD_ARDIS/" #define the data directory, explicitly
+work_dir = os.getcwd() #define the work directory, explicitly as the direcotry of this pipleine
+genome_dir = "/data/CARD_ARDIS/" #define the genome directory, explicitly
 
-LAYOUT = config['layout'].upper()
-
-configfile: "config.yaml"
-metadata_table = config['metadata_file']
-metadata_df = pd.read_csv(metadata_table)
-SAMPLES = metadata_df['sampleID'].tolist()
+"""Metadata parameters"""
+samples=pd.read_csv(metadata_table)
 
 
 # --- Grab FASTQ paths ---
@@ -35,12 +31,14 @@ def get_fastqs(wc):
 """========================================================================="""
 """                                  Workflow                               """
 """========================================================================="""
+# Singularity containers
+
 
 rule all:
     input:
-        expand(f"{WORK_DIR}/fastqc/{{sample}}_R1_fastqc.html", sample=SAMPLES),
-        expand(f"{WORK_DIR}/fastqc/{{sample}}_R2_fastqc.html", sample=SAMPLES),
-        f"{WORK_DIR}/multiqc/multiqc_report.html"
+        expand(f"{work_dir}/fastqc/{{sample}}_R1_fastqc.html", sample=samples),
+        expand(f"{work_dir}/fastqc/{{sample}}_R2_fastqc.html", sample=samples),
+        f"{work_dir}/multiqc/multiqc_report.html"
 
 rule fastqc:
     input:
@@ -66,11 +64,10 @@ rule fastqc:
         fastqc --extract -t {threads} --dir $LSCRATCH -o $LSCRATCH $R2
         """
 
-
 rule multiqc:
     input:
-        expand(f"{WORK_DIR}/fastqc/{{sample}}_R1_fastqc.html", sample=SAMPLES),
-        expand(f"{WORK_DIR}/fastqc/{{sample}}_R2_fastqc.html", sample=SAMPLES)
+        expand(f"{work_dir}/fastqc/{{sample}}_R1_fastqc.html", sample=samples),
+        expand(f"{work_dir}/fastqc/{{sample}}_R2_fastqc.html", sample=samples)
     output:
         f"{WORK_DIR}/multiqc/multiqc_report.html"
     resources:
