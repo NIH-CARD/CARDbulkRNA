@@ -70,7 +70,7 @@ rule concatenate2:
     input: r2_list
     output: "results/combined/{sample}_combined_R2.fastq.gz"
     shell:
-        r"""
+        """
         mkdir -p results/combined
         cat {input} > {output}
         """
@@ -152,4 +152,22 @@ rule star_alignment:
              --outFileNamePrefix {work_dir}/star/{params.sample}. \
              --outSAMtype BAM SortedByCoordinate
        """
+
+rule featureCounts:
+    input:
+        bam=expand(f"{work_dir}/star/{{sample}}.Aligned.sortedByCoord.out.bam", sample=samples)
+    output:
+        counts=f"{work_dir}/featurecounts/gene_counts.txt",
+        summary=f"{work_dir}/featurecounts/gene_counts.txt.summary"
+    params:
+        gtf=config["featureCounts"]["gtf"]
+    resources:
+        mem_mb=64000,
+        slurm_partition="long"
+    shell:
+        """
+        module load subread
+        mkdir -p {work_dir}/featurecounts
+        featureCounts -T 8 -a {params.gtf} -o {output.counts} {input.bam}
+        """
 
